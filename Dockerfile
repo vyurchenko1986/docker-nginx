@@ -15,19 +15,17 @@ ENV TZ=${TZ:-$tz}
 
 ENV DUMB_INIT_RELEASE=${DUMB_INIT_RELEASE:-$dumb_init_release}
 
-RUN set -x \
-    && apk update \
+RUN set -x apk update \
     && apk upgrade \
     && ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone \
     && apk add --update tzdata \
-    && apk --no-cache add --virtual .build-dependencies curl nginx \
-    #
+    && apk --no-cache add --virtual .build-dependencies curl \
     && adduser -S -D -u 8062 -H nginx \
     && curl -Lo /usr/local/bin/dumb-init ${DUMB_INIT_RELEASE} \
     && chmod +x /usr/local/bin/dumb-init \
-    #
-    && apk del --purge -r .build-dependencies \
+    && apk del --purge -r .build-dependencies
+RUN set -x apk --no-cache add nginx \
     && rm -rf /tmp/* \
     && rm -rf /var/tmp/* \
     && rm -rf /var/cache/apk/* \
